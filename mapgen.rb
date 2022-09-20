@@ -59,14 +59,21 @@ def connected?(map)
   return false
 end
 
+def create_center_start_map(width, height)
+  map = (("." * width + "\n") * height).strip
+  center_pos = (height / 2) * (width + 1) + (width / 2)
+  map[center_pos] = 's'
+  return map
+end
+
 def create_map(width,height,entrance_edge,entrance_pos)
   map = (("." * width + "\n") * height).strip
   map[get_edge_pos(map, entrance_edge, entrance_pos)] = 's'
   if not beyond_edge?(map, entrance_edge, entrance_pos + 1)
-    map[get_edge_pos(map, entrance_edge, entrance_pos + 1)] = '#'
+    map[get_edge_pos(map, entrance_edge, entrance_pos + 1)] = 'X'
   end
   if not beyond_edge?(map, entrance_edge, entrance_pos - 1)
-    map[get_edge_pos(map, entrance_edge, entrance_pos - 1)] = '#'
+    map[get_edge_pos(map, entrance_edge, entrance_pos - 1)] = 'X'
   end
   return map
 end
@@ -171,3 +178,6 @@ def map_height(map)
   return (map.length) / (map_width(map) + 1) + 1
 end
 
+def clean_up_placeholders(map)
+  return map.gsub('X','#').gsub('s', '.').gsub('e', '.')
+end

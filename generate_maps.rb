@@ -29,4 +29,5 @@ end
   big_map = grow_walkable_area(big_map)
 end
 
+big_map = clean_up_placeholders(big_map)
 puts big_map
