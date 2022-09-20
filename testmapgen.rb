@@ -110,4 +110,40 @@ class TestMapGen < Test::Unit::TestCase
     assert !is_connected(map)
   end
 
+  def test_can_find_exit_south_trivially
+    map = <<~MAP.strip
+      #.s..
+      ..e..
+      .....
+      .....
+      ..#..
+    MAP
+    
+    assert is_connected(map)
+  end
+
+  def test_can_find_exit_south_with_space
+    map = <<~MAP.strip
+      #....
+      ..s..
+      .....
+      .....
+      ..e..
+    MAP
+    
+    assert is_connected(map)
+  end
+
+  def test_can_find_exit_north
+    map = <<~MAP.strip
+      #....
+      ..e..
+      .....
+      .....
+      ..s..
+    MAP
+    
+    assert is_connected(map)
+  end
+
 end
