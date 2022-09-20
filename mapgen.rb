@@ -1,3 +1,8 @@
+EAST = 0
+NORTH = 1
+WEST = 2
+SOUTH = 3
+
 # why is there not a built-in for this
 def sign(num)
   num <=> 0
@@ -45,4 +50,10 @@ def is_connected(map)
   end
 
   return false
+end
+
+def create_map(width,height,entrance_wall,entrance_pos)
+  map = ("." * width + "\n") * height
+  map[0] = 's'
+  return map[0...-1]
 end

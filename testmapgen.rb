@@ -194,4 +194,32 @@ class TestMapGen < Test::Unit::TestCase
     assert is_connected(map)
   end
 
+  def test_create_smallest_map
+    map = <<~MAP.strip
+      s
+    MAP
+
+    assert_equal(map, create_map(1,1,EAST,0))
+  end
+
+  def test_map_size_is_honored
+    map = <<~MAP.strip
+      s......
+      .......
+      .......
+    MAP
+
+    assert_equal(map, create_map(7,3,NORTH,0))
+  end
+
+  #TODO
+  def test_map_starting_pos_honored_on_north_edge
+    map = <<~MAP.strip
+      ....s..
+      .......
+      .......
+    MAP
+
+    assert_equal(map, create_map(7,3,NORTH,4))
+  end
 end
