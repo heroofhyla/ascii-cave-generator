@@ -49,4 +49,65 @@ class TestMapGen < Test::Unit::TestCase
 
     assert is_connected(map)
   end 
+
+  def test_can_find_exit_to_east_trivially
+    map = <<~MAP.strip
+      se...
+      .....
+      .....
+      .....
+      ..#..
+    MAP
+
+    assert is_connected(map)
+  end
+
+  def test_can_find_exit_to_east_with_some_space
+    map = <<~MAP.strip
+      s..e.
+      .....
+      .....
+      .....
+      ..#..
+    MAP
+
+    assert is_connected(map)
+  end
+
+  def test_can_find_exit_to_east_if_starting_past_0
+    map = <<~MAP.strip
+      #.s.e
+      .....
+      .....
+      .....
+      ..#..
+    MAP
+
+    assert is_connected(map)
+  end
+
+  def test_can_find_exit_west
+    map = <<~MAP.strip
+      #.e.s
+      .....
+      .....
+      .....
+      ..#..
+    MAP
+    
+    assert is_connected(map)
+  end
+
+  def test_cannot_find_exit_by_wrapping
+    map = <<~MAP.strip
+      ..#.s
+      e..##
+      .....
+      .....
+      ..#..
+    MAP
+    
+    assert !is_connected(map)
+  end
+
 end
