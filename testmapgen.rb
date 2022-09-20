@@ -212,7 +212,6 @@ class TestMapGen < Test::Unit::TestCase
     assert_equal(map, create_map(7,3,NORTH,0))
   end
 
-  #TODO
   def test_map_starting_pos_honored_on_north_edge
     map = <<~MAP.strip
       ....s..
@@ -221,5 +220,130 @@ class TestMapGen < Test::Unit::TestCase
     MAP
 
     assert_equal(map, create_map(7,3,NORTH,4))
+  end
+
+  def test_map_starting_pos_honored_on_south_edge
+    map = <<~MAP.strip
+      .......
+      .......
+      ..s....
+    MAP
+
+    assert_equal(map, create_map(7,3,SOUTH,2))
+  end
+
+  def test_map_starting_pos_honored_on_west_edge
+    map = <<~MAP.strip
+      .......
+      .......
+      .......
+      s......
+      .......
+    MAP
+
+    assert_equal(map, create_map(7,5,WEST,3))
+  end
+
+  def test_map_starting_pos_honored_on_east_edge
+    map = <<~MAP.strip
+      .......
+      .......
+      ......s
+      .......
+      .......
+    MAP
+
+    assert_equal(map, create_map(7,5,EAST,2))
+
+  end
+
+  def test_placing_exit
+    expected_map = <<~MAP.strip
+      .......
+      .......
+      ......s
+      e......
+      .......
+    MAP
+
+    map = create_map(7,5,EAST,2) 
+    map = place_exit(map, WEST, 3)
+    assert_equal(map, expected_map)
+  end
+
+  def test_fix_south_wall_placement
+    assert_nothing_raised {create_map(12,14,SOUTH,3)}
+  end
+  
+  def test_south_wall_entrance_tall_map
+    map = <<~MAP.strip
+      ....
+      ....
+      ....
+      ....
+      ....
+      ..s.
+    MAP
+
+    assert_equal(map, create_map(4,6,SOUTH,2))
+  end
+
+  def test_nth_index
+    assert_equal(4, nth_index("banana", 'n', 1))
+  end
+
+  def test_nth_index_first
+    assert_equal(0, nth_index("america", 'a', 0))
+  end
+
+  def test_nth_index_fail_to_find
+    assert_equal(nil, nth_index("banana", 'n', 2))
+  end
+
+  def test_south_wall_exit_on_ten_by_ten
+    expected_map =<<~MAP.strip
+      ..........
+      s.........
+      ..........
+      ..........
+      ..........
+      ..........
+      ..........
+      ..........
+      ..........
+      ..e.......
+    MAP
+
+    map = create_map(10,10,WEST,1)
+    map = place_exit(map, SOUTH,2)
+    assert_equal(map, expected_map)
+  end
+
+  def test_map_width
+    assert_equal(5, map_width(create_map(5,9,WEST,1)))
+  end
+  
+  def test_map_width_for_single_column_map
+    assert_equal(1, map_width(create_map(1,10,WEST,0)))
+  end
+
+  def test_map_width_for_single_row_map
+    assert_equal(9, map_width(create_map(9,1,WEST,0)))
+  end
+
+  def test_map_height
+    assert_equal(3, map_height(create_map(7,3,WEST,0)))
+  end
+
+  def test_map_height_square
+    assert_equal(10, map_height(create_map(10,10,WEST,0)))
+  end
+
+  def test_map_height_for_single_row_map
+    assert_equal(1, map_height(create_map(10,1,WEST,0)))
+  end
+
+  def test_map_height_for_single_column_map
+    assert_equal(10, map_height(create_map(1,10,WEST,0)))
   end
 end
