@@ -1,5 +1,6 @@
 def change_string(my_string)
-  my_string.gsub("x", "y")
+  my_string = my_string.dup
+  my_string.gsub!("x", "y")
 end
 
 original_string = "axbxcx"

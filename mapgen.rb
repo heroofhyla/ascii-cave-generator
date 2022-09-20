@@ -3,33 +3,45 @@ def sign(num)
   num <=> 0
 end
 
+# Runs a simple flood fill on a map to make sure all exits are reachable
+# from the entrance
 def is_connected(map)
   return false unless map.include? "s"
   return true unless map.include? "e"
 
-  start_index = map.index "s"
-  end_index = map.index "e"
+  map = map.dup
+
+  map.sub! "s", "!"
 
   column_count = 1 + map.index("\n")
 
-  return true if start_index + column_count == end_index
+  directions = [
+    -column_count,
+    column_count,
+    -1,
+    1
+  ]
 
-  step_sign = sign(end_index - start_index)
-  
-  # Check by row
-  start_index.step(end_index, step_sign) do |i|
-    c = map[i]
-    break if c == "\n"
-    break if c == "#"
-    return true if c == "e"
-  end
+  made_progress = true
 
-  # Check by column
-  start_index.step(end_index, column_count * step_sign) do |i|
-    c = map[i]
-    break if c == "\n"
-    break if c == "#"
-    return true if c == "e"
+  while made_progress
+    made_progress = false
+    map.chars.each_with_index do |c, i|
+
+      next unless c == '!'
+      directions.each do |dir|
+
+        next_space = dir+i
+        next if next_space < 0
+
+        if map[next_space] == "e" || map[next_space] == "."
+          map[next_space] = "!"
+          made_progress = true
+        end
+      end
+    end
+
+    return true if map.count("e") == 0
   end
 
   return false

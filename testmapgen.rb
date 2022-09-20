@@ -145,5 +145,53 @@ class TestMapGen < Test::Unit::TestCase
     
     assert is_connected(map)
   end
+  
+  def test_can_find_exit_diagonally
+    map = <<~MAP.strip
+      #....
+      e....
+      .....
+      .....
+      ..s..
+    MAP
+    
+    assert is_connected(map)
+  end
+
+  def test_can_find_in_complex_maze
+    map = <<~MAP.strip
+      #....
+      ..#..
+      ..#..
+      .###.
+      e#s..
+    MAP
+    
+    assert is_connected(map)
+  end
+
+  def test_all_exits_must_be_reachable
+    map = <<~MAP.strip
+      #....
+      e.#..
+      ..#..
+      ####.
+      e.#s.
+    MAP
+    
+    assert !is_connected(map)
+  end
+
+  def test_multiple_reachable_exits_pass
+    map = <<~MAP.strip
+      #....
+      e.#..
+      ..#..
+      #.##.
+      e.#s.
+    MAP
+    
+    assert is_connected(map)
+  end
 
 end
