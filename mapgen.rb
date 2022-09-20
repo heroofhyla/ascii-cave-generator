@@ -18,7 +18,7 @@ end
 
 # Runs a simple flood fill on a map to make sure all exits are reachable
 # from the entrance
-def is_connected(map)
+def connected?(map)
   return false unless map.include? "s"
   return true unless map.include? "e"
 
@@ -61,18 +61,35 @@ def is_connected(map)
 end
 
 def create_map(width,height,entrance_edge,entrance_pos)
-  map = ("." * width + "\n") * height
+  map = (("." * width + "\n") * height).strip
   map[get_edge_pos(map, entrance_edge, entrance_pos)] = 's'
-  return map[0...-1]
+  if not beyond_edge?(map, entrance_edge, entrance_pos + 1)
+    map[get_edge_pos(map, entrance_edge, entrance_pos + 1)] = '#'
+  end
+  if not beyond_edge?(map, entrance_edge, entrance_pos - 1)
+    map[get_edge_pos(map, entrance_edge, entrance_pos - 1)] = '#'
+  end
+  return map
+end
+
+def beyond_edge?(map,edge,pos)
+  if edge == NORTH or edge == SOUTH
+    return true if pos >= map_width(map)
+  end
+  if edge == EAST or edge == WEST
+    return true if pos >= map_height(map)
+  end
+  return true if pos < 0
 end
 
 def place_exit(map, edge, pos)
   map = map.dup
-  map[get_edge_pos(map +"\n", edge, pos)] = 'e'
+  map[get_edge_pos(map, edge, pos)] = 'e'
   return map
 end
 
 def get_edge_pos(map, edge, pos)
+  map = map.strip + "\n"
   width = map_width(map)
   height = (map.length) / (width + 1)
   if edge == NORTH
@@ -96,7 +113,7 @@ def create_narrow_path(map)
     random_spot_index = rand(free_space_count)
     random_spot_pos = nth_index(map, ".", random_spot_index)
     map[random_spot_pos] = "#"
-    if not is_connected(map)
+    if not connected?(map)
       map[random_spot_pos] = 'o'
     end
   end

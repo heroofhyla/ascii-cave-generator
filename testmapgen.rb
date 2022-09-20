@@ -11,10 +11,10 @@ class TestMapGen < Test::Unit::TestCase
       .....
     MAP
 
-    assert !is_connected(map)
+    assert !connected?(map)
   end
 
-  def test_start_only_map_is_connected
+  def test_start_only_map_connected?
     map = <<~MAP.strip
       .....
       .....
@@ -23,7 +23,7 @@ class TestMapGen < Test::Unit::TestCase
       .....
     MAP
 
-    assert is_connected(map)
+    assert connected?(map)
   end
 
   def test_map_with_walls_blocking_route_is_not_connected
@@ -35,10 +35,10 @@ class TestMapGen < Test::Unit::TestCase
       ..#..
     MAP
 
-    assert !is_connected(map)
+    assert !connected?(map)
   end
 
-  def test_map_with_walls_but_no_exit_is_connected
+  def test_map_with_walls_but_no_exit_connected?
     map = <<~MAP.strip
       ..#..
       ..#..
@@ -47,7 +47,7 @@ class TestMapGen < Test::Unit::TestCase
       ..#..
     MAP
 
-    assert is_connected(map)
+    assert connected?(map)
   end 
 
   def test_can_find_exit_to_east_trivially
@@ -59,7 +59,7 @@ class TestMapGen < Test::Unit::TestCase
       ..#..
     MAP
 
-    assert is_connected(map)
+    assert connected?(map)
   end
 
   def test_can_find_exit_to_east_with_some_space
@@ -71,7 +71,7 @@ class TestMapGen < Test::Unit::TestCase
       ..#..
     MAP
 
-    assert is_connected(map)
+    assert connected?(map)
   end
 
   def test_can_find_exit_to_east_if_starting_past_0
@@ -83,7 +83,7 @@ class TestMapGen < Test::Unit::TestCase
       ..#..
     MAP
 
-    assert is_connected(map)
+    assert connected?(map)
   end
 
   def test_can_find_exit_west
@@ -94,8 +94,8 @@ class TestMapGen < Test::Unit::TestCase
       .....
       ..#..
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
 
   def test_cannot_find_exit_by_wrapping
@@ -106,8 +106,8 @@ class TestMapGen < Test::Unit::TestCase
       .....
       ..#..
     MAP
-    
-    assert !is_connected(map)
+
+    assert !connected?(map)
   end
 
   def test_can_find_exit_south_trivially
@@ -118,8 +118,8 @@ class TestMapGen < Test::Unit::TestCase
       .....
       ..#..
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
 
   def test_can_find_exit_south_with_space
@@ -130,8 +130,8 @@ class TestMapGen < Test::Unit::TestCase
       .....
       ..e..
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
 
   def test_can_find_exit_north
@@ -142,10 +142,10 @@ class TestMapGen < Test::Unit::TestCase
       .....
       ..s..
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
-  
+
   def test_can_find_exit_diagonally
     map = <<~MAP.strip
       #....
@@ -154,8 +154,8 @@ class TestMapGen < Test::Unit::TestCase
       .....
       ..s..
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
 
   def test_can_find_in_complex_maze
@@ -166,8 +166,8 @@ class TestMapGen < Test::Unit::TestCase
       .###.
       e#s..
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
 
   def test_all_exits_must_be_reachable
@@ -178,8 +178,8 @@ class TestMapGen < Test::Unit::TestCase
       ####.
       e.#s.
     MAP
-    
-    assert !is_connected(map)
+
+    assert !connected?(map)
   end
 
   def test_multiple_reachable_exits_pass
@@ -190,8 +190,8 @@ class TestMapGen < Test::Unit::TestCase
       #.##.
       e.#s.
     MAP
-    
-    assert is_connected(map)
+
+    assert connected?(map)
   end
 
   def test_create_smallest_map
@@ -204,7 +204,7 @@ class TestMapGen < Test::Unit::TestCase
 
   def test_map_size_is_honored
     map = <<~MAP.strip
-      s......
+      s#.....
       .......
       .......
     MAP
@@ -212,9 +212,28 @@ class TestMapGen < Test::Unit::TestCase
     assert_equal(map, create_map(7,3,NORTH,0))
   end
 
+  def test_map_height_7_by_3
+    map = <<~MAP.strip
+      .......
+      #......
+      s......
+    MAP
+
+    assert_equal(3, map_height(map))
+  end
+  def test_create_edges_west
+    map = <<~MAP.strip
+      .......
+      #......
+      s......
+    MAP
+
+    assert_equal(map, create_map(7,3,WEST,2))
+  end
+
   def test_map_starting_pos_honored_on_north_edge
     map = <<~MAP.strip
-      ....s..
+      ...#s#.
       .......
       .......
     MAP
@@ -226,7 +245,7 @@ class TestMapGen < Test::Unit::TestCase
     map = <<~MAP.strip
       .......
       .......
-      ..s....
+      .#s#...
     MAP
 
     assert_equal(map, create_map(7,3,SOUTH,2))
@@ -236,9 +255,9 @@ class TestMapGen < Test::Unit::TestCase
     map = <<~MAP.strip
       .......
       .......
-      .......
+      #......
       s......
-      .......
+      #......
     MAP
 
     assert_equal(map, create_map(7,5,WEST,3))
@@ -247,9 +266,9 @@ class TestMapGen < Test::Unit::TestCase
   def test_map_starting_pos_honored_on_east_edge
     map = <<~MAP.strip
       .......
-      .......
+      ......#
       ......s
-      .......
+      ......#
       .......
     MAP
 
@@ -260,9 +279,9 @@ class TestMapGen < Test::Unit::TestCase
   def test_placing_exit
     expected_map = <<~MAP.strip
       .......
-      .......
+      ......#
       ......s
-      e......
+      e.....#
       .......
     MAP
 
@@ -274,7 +293,7 @@ class TestMapGen < Test::Unit::TestCase
   def test_fix_south_wall_placement
     assert_nothing_raised {create_map(12,14,SOUTH,3)}
   end
-  
+
   def test_south_wall_entrance_tall_map
     map = <<~MAP.strip
       ....
@@ -282,7 +301,7 @@ class TestMapGen < Test::Unit::TestCase
       ....
       ....
       ....
-      ..s.
+      .#s#
     MAP
 
     assert_equal(map, create_map(4,6,SOUTH,2))
@@ -302,9 +321,9 @@ class TestMapGen < Test::Unit::TestCase
 
   def test_south_wall_exit_on_ten_by_ten
     expected_map =<<~MAP.strip
-      ..........
+      #.........
       s.........
-      ..........
+      #.........
       ..........
       ..........
       ..........
@@ -322,7 +341,7 @@ class TestMapGen < Test::Unit::TestCase
   def test_map_width
     assert_equal(5, map_width(create_map(5,9,WEST,1)))
   end
-  
+
   def test_map_width_for_single_column_map
     assert_equal(1, map_width(create_map(1,10,WEST,0)))
   end
@@ -346,4 +365,182 @@ class TestMapGen < Test::Unit::TestCase
   def test_map_height_for_single_column_map
     assert_equal(10, map_height(create_map(1,10,WEST,0)))
   end
+
+  def test_beyond_edge_within_top_left_north
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, NORTH,0))
+  end
+
+  def test_beyond_edge_before_top_left_north
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, NORTH,-1))
+  end
+
+  def test_beyond_edge_within_top_right_north
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, NORTH,6))
+  end
+
+  def test_beyond_edge_after_top_right_north
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, NORTH,7))
+  end
+
+  def test_beyond_edge_within_bottom_left_south
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, SOUTH,0))
+  end
+
+  def test_beyond_edge_before_bottom_left_south
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, SOUTH,-1))
+  end
+
+  def test_beyond_edge_within_bottom_right_south
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, SOUTH,6))
+  end
+
+  def test_beyond_edge_after_bottom_right_south
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, SOUTH,7))
+  end
+
+  def test_beyond_edge_within_top_left_west
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, WEST,0))
+  end
+
+  def test_beyond_edge_before_top_left_west
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, WEST,-1))
+  end
+
+  def test_beyond_edge_within_bottom_left_west
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, WEST,2))
+  end
+
+  def test_beyond_edge_after_bottom_left_west
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, WEST,3))
+  end
+
+  def test_beyond_edge_within_top_right_east
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, EAST,0))
+  end
+
+  def test_beyond_edge_before_top_right_east
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, EAST,-1))
+  end
+
+  def test_beyond_edge_within_bottom_right_east
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(!beyond_edge?(map, EAST,2))
+  end
+
+  def test_beyond_edge_after_bottom_right_east
+
+    map = <<~MAP.strip
+      s#.....
+      .......
+      .......
+    MAP
+
+    assert(beyond_edge?(map, EAST,3))
+  end
+
+
 end
