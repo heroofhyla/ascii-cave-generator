@@ -1,5 +1,7 @@
 require_relative "mapgen.rb"
 
+big_map = ""
+
 maps = []
 5.times do
   maps << []
@@ -20,6 +22,11 @@ last_exit = rand(8) + 1
     map = create_narrow_path(map)
     maps[row] << map
   end
-  puts concat_maps(maps[row])
+  big_map << concat_maps(maps[row]) << "\n"
 end
 
+1000.times do
+  big_map = grow_walkable_area(big_map)
+end
+
+puts big_map

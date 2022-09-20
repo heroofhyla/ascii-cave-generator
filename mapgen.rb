@@ -3,7 +3,6 @@ NORTH = 1
 WEST = 2
 SOUTH = 3
 
-# why is there not a built-in for this
 def sign(num)
   num <=> 0
 end
@@ -26,7 +25,7 @@ def connected?(map)
 
   map.sub! "s", "!"
 
-  column_count = 1 + map.index("\n")
+  column_count = 1 + map_width(map)
 
   directions = [
     -column_count,
@@ -47,7 +46,7 @@ def connected?(map)
         next_space = dir+i
         next if next_space < 0
 
-        if map[next_space] == "e" || map[next_space] == "." || map[next_space] == 'o'
+        if map[next_space] && "e.o".include?(map[next_space])
           map[next_space] = "!"
           made_progress = true
         end
@@ -109,15 +108,40 @@ def create_narrow_path(map)
   map = map.dup
   return map unless map.include? '.'
   while map.include? '.'
-    free_space_count = map.count '.'
-    random_spot_index = rand(free_space_count)
-    random_spot_pos = nth_index(map, ".", random_spot_index)
+    random_spot_pos = random_walkable_spot(map)
     map[random_spot_pos] = "#"
     if not connected?(map)
       map[random_spot_pos] = 'o'
     end
   end
   map.gsub!('o','.')
+  return map
+end
+
+def random_walkable_spot(map)
+  free_space_count = map.count '.'
+  random_spot_index = rand(free_space_count)
+  return nth_index(map, ".", random_spot_index)
+end
+
+def grow_walkable_area(map)
+  map = map.dup
+  starting_spot = random_walkable_spot(map)
+  column_count = map_width(map) + 1
+  directions = [
+    -column_count,
+    column_count,
+    -1,
+    1
+  ]
+
+  directions.shuffle!
+  directions.each do |dir|
+    if map[dir + starting_spot] == "#"
+      map[dir + starting_spot] = "."
+      return map
+    end
+  end
   return map
 end
 
@@ -135,8 +159,7 @@ def concat_maps(maps)
     end
   end
 
-  rows.join("\n")
-  return rows
+  return rows.join("\n")
 end
 
 def map_width(map)
