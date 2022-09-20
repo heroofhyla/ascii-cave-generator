@@ -1,9 +1,9 @@
 require_relative "mapgen.rb"
 
-TILE_WIDTH = 8
-TILE_HEIGHT = 8
-X_TILES = 10
-Y_TILES = 6
+TILE_WIDTH = 7
+TILE_HEIGHT = 7
+X_TILES = 6
+Y_TILES = 4
 
 center_x = X_TILES / 2
 center_y = Y_TILES / 2
@@ -64,7 +64,7 @@ for row in maps
   big_map << concat_maps(row) << "\n"
 end
 
-(rand(2000) + 1000).times do
+(rand(500) + 400).times do
   big_map = grow_walkable_area(big_map)
 end
 
