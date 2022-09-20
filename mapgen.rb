@@ -1,7 +1,9 @@
+UNSET = -1
 EAST = 0
 NORTH = 1
 WEST = 2
 SOUTH = 3
+CENTER = 4
 
 def sign(num)
   num <=> 0
@@ -180,4 +182,12 @@ end
 
 def clean_up_placeholders(map)
   return map.gsub('X','#').gsub('s', '.').gsub('e', '.')
+end
+
+def opposite_dir(dir)
+  return SOUTH if dir == NORTH
+  return NORTH if dir == SOUTH
+  return EAST if dir == WEST
+  return WEST if dir == EAST
+  return UNSET
 end
